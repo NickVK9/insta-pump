@@ -1,8 +1,12 @@
 import telebot
 import requests
+from flask import Flask, request
+import os
 
 TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw' 
 bot = telebot.TeleBot(TOKEN)
+
+server = Flask(__name__) # это строка нужна только при запуске на сервере
 
 # КЛАВИАТУРЫ БУДУТ ТУТ
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
@@ -124,4 +128,23 @@ def send_text(message):
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
-bot.polling()
+# на локалхосте раскоментить
+#bot.polling()
+
+# на локалхосте закомментить, это для работы на сервере
+@server.route('/'+TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://instapump.herokuapp.com/' + TOKEN)
+    return "!", 200
+
+
+if __name__ == '__main__':
+    # создаю несколько потоков, так как heroku не дает запускать несколько фалов на сервере одновременно
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+
