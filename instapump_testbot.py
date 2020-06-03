@@ -67,7 +67,7 @@ Hashtags : *В РАЗРАБОТКЕ*
     user = user.text
     user_id = 1
     ask = requests.get('https://www.instagram.com/{}/?__a=1'.format(user))
-    print('\n', answer.content, '\n')
+    print('\n', ask.content, '\n')
     answer = ask.json()
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
