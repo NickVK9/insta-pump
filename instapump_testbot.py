@@ -1,35 +1,31 @@
+import telebot
 import requests
-import csv
-import time
-import json
 
-def check_time(func):
-    def wrapper(*args, **kwargs):
-        start = time.time()
-        result = func(*args, **kwargs)
-        end = time.time()
-        print('[*] Время выполнения функции {} равно {} секунд'.format(func, end - start), end='\n\n')
-        return (result)
-    return wrapper
+TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw' 
+bot = telebot.TeleBot(TOKEN)
 
-@check_time
+# КЛАВИАТУРЫ БУДУТ ТУТ
+KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
+KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
+
+
+# установить количество знаков после запятой
+def toFixed(numObj, digits=0):
+    return f"{numObj:.{digits}f}"
+
 def rating_count(user_info):
     followers = user_info['followed_by']
     try:
         comments_count = sum([comment['comments'] for comment in user_info['photos_data']]) 
         comments_percent = comments_count / 12 / followers 
-        print('Процент комментов', comments_percent)
     except TypeError:
         comments_percent = 0
-        print('Процент комментов', comments_percent)
 
     try:
         likes_count = sum([like['likes'] for like in user_info['photos_data']])
         likes_percent = likes_count / 12 / followers
-        print('Процент лайков', likes_percent)
     except TypeError:
         likes_percent = 0
-        print('Процент лайков', likes_percent)
     try:   
         all_times = [time['time'] for time in user_info['photos_data']]
         periods = []
@@ -42,21 +38,34 @@ def rating_count(user_info):
             mean_time = 0
         else:
             mean_time = 1 / sum(periods) / 11 / 60 / 60 / 24
-        print('Среднее время между постами:', mean_time)
     except TypeError:
         mean_time = 0
-        print('Среднее время между постами:', mean_time)
     rating = followers * (1 + likes_percent * 0.85 + comments_percent * 0.15) * (1 + mean_time)
-    print('Рейтинг:', rating)
     return rating
 
-@check_time
 def take_info(user):
+    PERSONAL = '''
+💎 Telegram Name : {tg_log}
+💎Instagram Name: {inst_log}
+🔸Тип профиля: {type}
+
+👥Подписчики : {followers}
+❣Среднее кол-во лайков: {mean_like}
+📊Рейтинг : {rating}
+
+📨Реферальная ссылка: *В РАЗРАБОТКЕ*
+📝Bio: *В РАЗРАБОТКЕ*
+Hashtags : *В РАЗРАБОТКЕ*
+
+Одобрен *В РАЗРАБОТКЕ*
+'''
+    message = user
+    user = user.text
     user_id = 1
     ask = requests.get('https://www.instagram.com/{}/?__a=1'.format(user))
     answer = ask.json()
     if answer == {}: # ввел несуществующего пользователя
-        print('нет такого пользователя')
+        bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
     else:
         followed_by = answer['graphql']['user']['edge_followed_by']['count'] # количество подписчиков
@@ -89,41 +98,30 @@ def take_info(user):
         user_id += 1
         rating = rating_count(needed)
         needed['user_rating'] = rating
-        print(needed)
-        return needed
+        likes_count = sum([like['likes'] for like in needed['photos_data']])
+        mean_like = likes_count / 12
+        PERSONAL = PERSONAL.format(
+            tg_log=message.from_user.username,
+            inst_log=user,
+            type=needed['subcategory'],
+            followers=needed['followed_by'],
+            mean_like=int(mean_like),
+            rating=toFixed(needed['user_rating'], 4)
+        )
+        bot.send_message(message.chat.id, PERSONAL, reply_markup=KEYBOARD_TO_ACC)
 
-if __name__ == "__main__":
-    user_id = 1
-    users_before = []
-    users = [['Юзер id','Логин', 'Подписчиков', 'Подписок', 'Кол-во фото', 'Бизнес категория', 'Подкатегория', 'Данные по фото']]
-    with open('users_for_test.txt', 'r', encoding="utf8") as file:
-        for line in file:
-            a = line.split('\n')
-            a = a[0]
-            users_before.append(a)
-    
-    for i in users_before:
-        s1 = time.time()
-        info = take_info(i)
-        print(info)
-        rating = rating_count(info)
-        result = {user_id:rating}
-        users.append(result)
-        user_id += 1
-        s2 = time.time()
-        to_end = s2 - s1
-        print('Готово за: ', to_end, 'Осталось: ', len(users_before)-user_id)
+@bot.message_handler(commands=['start'])
+# обрабатывает действия после кнопки start
+def start_message(message):
+    bot.send_message(message.chat.id, 'Привет, {}! Приятно познакомиться)'.format(message.from_user.username), reply_markup=KEYBOARD_TO_ACC)
 
-    print(users)
-    
-    FILENAME = 'users.csv'
-    with open(FILENAME, "w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerows(users)
+@bot.message_handler(content_types=['text'])
+def send_text(message):
+    # основная функция, отвечает за действия после нажатия кнопок
+    if message.text == 'Сформировать личный кабинет':
+        bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
+        bot.register_next_step_handler(message, take_info)
+    else:
+        bot.send_message(message.chat.id, 'Используй кнопки!')
 
-''' Tests
-print(take_info('m_s_nobody'))
-print(take_info('korepanov_nv'))
-print(take_info('anzhelika_sty'))
-print(take_info('vkmfbmfbmblfvvfvfdvbdfbgngngngnggnrvv'))
-'''
+bot.polling()
