@@ -68,8 +68,9 @@ Hashtags : *В РАЗРАБОТКЕ*
     print(user)
     print(type(user))
     user_id = 1
-    ask = requests.get('https://vk.com/away.php?utf=1&to=https%3A%2F%2Fwww.instagram.com%2F{}%2F%3F__a%3D1'.format(user))
+    ask = requests.get('https://www.instagram.com/{}/?__a=1'.format(user))
     bot.send_message(message.chat.id, ask.content, reply_markup=KEYBOARD_TO_ACC)
+    bot.send_message(message.chat.id, ask.text, reply_markup=KEYBOARD_TO_ACC)
     answer = ask.json()
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
