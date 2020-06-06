@@ -18,4 +18,4 @@ def scrape_data(user):
 if __name__ == '__main__':
 	username = str(input())
 	data = scrape_data(username)
-	print(type(data))
+	print(data)
