@@ -1,25 +1,20 @@
 from bs4 import BeautifulSoup as bs
 import requests as req
+import json
 
 URL = 'https://www.instagram.com/{}'
 
-def parse_data(page):
-	data = {}
-	page = page.split('-')[0].split()
-
-	data['Followers'] = page[0]
-	data['Following'] = page[2]
-	data['Posts'] = page[4]
-
-	return data
-
 def scrape_data(user):
 	ask = req.get(URL.format(user))
+
 	soup = bs(ask.text, 'html.parser')
+	body = soup.find('body')
+	script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
 
-	meta = soup.find('meta', property='og:description')
+	page_json = script.text.split(' = ', 1)[1].rstrip(';')
+	data_json = json.loads(page_json)
 
-	return parse_data(meta.attrs['content'])
+	return data_json
 
 if __name__ == '__main__':
 	username = str(input())
