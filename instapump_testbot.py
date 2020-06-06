@@ -1,5 +1,7 @@
 import telebot
-import requests
+from bs4 import BeautifulSoup as bs
+import requests as req
+import json
 from flask import Flask, request
 import os
 
@@ -12,6 +14,18 @@ server = Flask(__name__) # это строка нужна только при з
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
 
+# парсит сраный html
+def scrape_data(user):
+	ask = req.get('https://www.instagram.com/{}'.format(user))
+
+	soup = bs(ask.text, 'html.parser')
+	body = soup.find('body')
+	script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
+
+	page_json = script.text.split(' = ', 1)[1].rstrip(';')
+	data_json = json.loads(page_json)
+
+	return data_json
 
 # установить количество знаков после запятой
 def toFixed(numObj, digits=0):
@@ -65,11 +79,8 @@ Hashtags : *В РАЗРАБОТКЕ*
 '''
     message = user
     user = user.text
-    print(user)
-    print(type(user))
     user_id = 1
-    ask = requests.get('https://www.instagram.com/{}/?__a=1'.format(user))
-    answer = ask.json()
+    answer = scrape_data(user)
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None

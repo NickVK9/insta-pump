@@ -1,1 +1,1 @@
-web: python fucking_requests.py
+web: python instapump_testbot.py

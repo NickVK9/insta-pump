@@ -2,10 +2,9 @@ from bs4 import BeautifulSoup as bs
 import requests as req
 import json
 
-URL = 'https://www.instagram.com/{}'
 
 def scrape_data(user):
-	ask = req.get(URL.format(user))
+	ask = req.get('https://www.instagram.com/{}'.format(user))
 
 	soup = bs(ask.text, 'html.parser')
 	body = soup.find('body')
@@ -19,4 +18,4 @@ def scrape_data(user):
 if __name__ == '__main__':
 	username = str(input())
 	data = scrape_data(username)
-	print(data)
+	print(type(data))
