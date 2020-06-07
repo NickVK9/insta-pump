@@ -1,5 +1,7 @@
 import telebot
-import requests
+from bs4 import BeautifulSoup as bs
+import requests as req
+import json
 from flask import Flask, request
 import os
 
@@ -11,6 +13,19 @@ bot = telebot.TeleBot(TOKEN)
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
 
+
+# парсит сраный html
+def scrape_data(user):
+	ask = req.get('https://www.instagram.com/{}'.format(user))
+
+	soup = bs(ask.text, 'html.parser')
+	body = soup.find('body')
+	script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
+
+	page_json = script.text.split(' = ', 1)[1].rstrip(';')
+	data_json = json.loads(page_json)
+
+	return data_json
 
 # установить количество знаков после запятой
 def toFixed(numObj, digits=0):
@@ -64,29 +79,30 @@ Hashtags : *В РАЗРАБОТКЕ*
 '''
     message = user
     user = user.text
-    print(user)
-    print(type(user))
     user_id = 1
-    ask = requests.get('https://www.instagram.com/{}/?__a=1'.format(user))
-    answer = ask.json()
+    answer = scrape_data(user)
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
     else:
-        followed_by = answer['graphql']['user']['edge_followed_by']['count'] # количество подписчиков
-        edge_follow = answer['graphql']['user']['edge_follow']['count'] # количество подписок
-        content_count = answer['graphql']['user']['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
-        if answer['graphql']['user']['is_business_account']: # проверка, является ли акк бизнес
-            business_category = answer['graphql']['user']['business_category_name'] # категория бизнеса
-            category_enum = answer['graphql']['user']['category_enum'] # конкретная категория
+        user_info_from_page = answer['entry_data']['ProfilePage'][0]['graphql']['user']
+        followed_by = user_info_from_page['edge_followed_by']['count'] # количество подписчиков
+        edge_follow = user_info_from_page['edge_follow']['count'] # количество подписок
+        content_count = user_info_from_page['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
+        if user_info_from_page['is_business_account']: # проверка, является ли акк бизнес
+            business_category = user_info_from_page['business_category_name'] # категория бизнеса
+            category_enum = user_info_from_page['category_enum'] # конкретная категория
         else:
             business_category = None
             category_enum = None
-        if answer['graphql']['user']['is_private']: # если аккаунт закрытый
+        if user_info_from_page['is_private']: # если аккаунт закрытый
             photos = None
         else:
             photos = []
-            for edge in answer['graphql']['user']['edge_owner_to_timeline_media']['edges']:
+            """
+ЧТО ТУТ БЫЛО ДО ЭТОГО?
+            """
+            for edge in answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']:
                 data = {
                     'comments':edge['node']['edge_media_to_comment']['count'],
                     'time':edge['node']['taken_at_timestamp'],
@@ -103,11 +119,8 @@ Hashtags : *В РАЗРАБОТКЕ*
         user_id += 1
         rating = rating_count(needed)
         needed['user_rating'] = rating
-        try:
-            likes_count = sum([like['likes'] for like in needed['photos_data']])
-            mean_like = likes_count / 12
-        except:
-            mean_like = 0
+        likes_count = sum([like['likes'] for like in needed['photos_data']])
+        mean_like = likes_count / 12
         PERSONAL = PERSONAL.format(
             tg_log=message.from_user.username,
             inst_log=user,

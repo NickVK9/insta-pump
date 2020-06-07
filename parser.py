@@ -16,6 +16,7 @@ def scrape_data(user):
 	return data_json
 
 if __name__ == '__main__':
-	username = str(input())
-	data = scrape_data(username)
-	print(type(data))
+	# username = str(input())
+	data = scrape_data('korepanov_nv')
+	user_info_from_page = data['entry_data']['ProfilePage'][0]['graphql']['user']
+	print(data['entry_data']['ProfilePage'][0]['graphql']['user'])
