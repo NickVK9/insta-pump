@@ -74,18 +74,23 @@ def authenticate_as_guest():
 
 def get_profile_info(username):
     url = USER_URL.format(username)
-    resp = get_json(url)
-
+    if logged_in:
+        resp = get_json(url)
+    else:
+        print('Авторизируюсь')
+        authenticate_with_login()
+        print('Авторизовался')
+        resp = get_json(url)
     if resp is None:
         print('Error getting user info for {0}'.format(username))
         return
 
-    if logged_in:
+    
 
-        user_info = json.loads(resp)['graphql']['user']
-        try:
-            profile_info = {
-                'biography': user_info['biography'],
+    user_info = json.loads(resp)['graphql']['user']
+    try:
+        profile_info = {
+            'biography': user_info['biography'],
                 'followers_count': user_info['edge_followed_by']['count'],
                 'following_count': user_info['edge_follow']['count'],
                 'full_name': user_info['full_name'],
@@ -96,31 +101,10 @@ def get_profile_info(username):
                 'posts_count': user_info['edge_owner_to_timeline_media']['count'],
                 'profile_pic_url': user_info['profile_pic_url']
             }
-            print(profile_info)
-        except (KeyError, IndexError, StopIteration):
-            print('Failed to build {0} profile info'.format(username))
-            return
-    else:
-        authenticate_with_login()
-        user_info = json.loads(resp)['graphql']['user']
-        try:
-            profile_info = {
-                'biography': user_info['biography'],
-                'followers_count': user_info['edge_followed_by']['count'],
-                'following_count': user_info['edge_follow']['count'],
-                'full_name': user_info['full_name'],
-                'id': user_info['id'],
-                'is_business_account': user_info['is_business_account'],
-                'is_joined_recently': user_info['is_joined_recently'],
-                'is_private': user_info['is_private'],
-                'posts_count': user_info['edge_owner_to_timeline_media']['count'],
-                'profile_pic_url': user_info['profile_pic_url']
-            }
-            print(profile_info)
-        except (KeyError, IndexError, StopIteration):
-            print('Failed to build {0} profile info'.format(username))
-            return
-
+        print(profile_info)
+    except (KeyError, IndexError, StopIteration):
+        print('Failed to build {0} profile info'.format(username))
+        return
 def sleep(secs):
     min_delay = 1
     for _ in range(secs // min_delay):
@@ -194,5 +178,3 @@ def get_json(*args, **kwargs):
 
     if resp is not None:
         return resp.text
-
-get_profile_info('korepanov_nv')
