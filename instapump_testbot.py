@@ -82,7 +82,7 @@ Hashtags : *В РАЗРАБОТКЕ*
     message = user
     user = user.text
     user_id = 1
-    answer = scrape_data(user)
+    answer = auth.authenticate_with_login(user)
     print(answer)
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
@@ -141,7 +141,7 @@ def send_text(message):
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
         auth.authenticate_with_login()
-        bot.register_next_step_handler(message, take_info)
+        #bot.register_next_step_handler(message, take_info)
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
