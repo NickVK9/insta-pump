@@ -4,12 +4,28 @@ import requests as req
 import json
 from flask import Flask, request
 import os
-import auth
 
 TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw'
 bot = telebot.TeleBot(TOKEN)
 
 server = Flask(__name__)  # это строка нужна только при запуске на сервере
+
+BASE_URL = 'https://www.instagram.com/'
+STORIES_UA = 'Instagram 123.0.0.21.114 (iPhone; CPU iPhone OS 11_4 like Mac OS X; en_US; en-US; scale=2.00; 750x1334) AppleWebKit/605.1.15'
+CHROME_WIN_UA = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'
+LOGIN_URL = BASE_URL + 'accounts/login/ajax/'
+
+LOGIN = 'instapump_support' # секретные данные акка
+PASSWORD = 'wetryingtodothisabout1week'
+PHONE_NUMBER = '+79651139899'
+
+session = req.Session()
+session.headers = {'user-agent': CHROME_WIN_UA}
+
+authenticated = False
+logged_in = False
+rhx_gis = ""
+cookies = None
 
 # КЛАВИАТУРЫ БУДУТ ТУТ
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
@@ -17,20 +33,33 @@ KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
 
 
 # парсит сраный html
-def scrape_data(user):
-    headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
-    ask = req.get('https://www.instagram.com/{}'.format(user), headers=headers)
+def authenticate_with_login(user):
+    """Logs in to instagram."""
+    session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
+    req = session.get(BASE_URL)
 
-    soup = bs(ask.text, 'html.parser')
-    body = soup.find('body')
-    script = body.find('script', text=lambda t: t.startswith('window._sharedData'))
+    session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
 
-    page_json = script.text.split(' = ', 1)[1].rstrip(';')
-    data_json = json.loads(page_json)
+    login_data = {'username': LOGIN, 'password': PASSWORD}
+    login = session.post(LOGIN_URL, data=login_data, allow_redirects=True)
+    session.headers.update({'X-CSRFToken': login.cookies['csrftoken']})
+    login_text = json.loads(login.text)
 
+    if login_text.get('authenticated') and login.status_code == 200:
+        session.headers.update({'user-agent': CHROME_WIN_UA})
+        print('Удачно залогинился')
+        print('Пробую взять инфу')
+        ask = session.get(BASE_URL+user)
+        soup = bs(ask.text, 'html.parser')
+        body = soup.find('body')
+        script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
+
+        page_json = script.text.split(' = ', 1)[1].rstrip(';')
+        data_json = json.loads(page_json)
+        print('Успешно спарсил')
+    else:
+        print('Login failed for ' + LOGIN)
     return data_json
-
-
 # установить количество знаков после запятой
 def toFixed(numObj, digits=0):
     return f"{numObj:.{digits}f}"
@@ -86,30 +115,30 @@ Hashtags : *В РАЗРАБОТКЕ*
     message = user
     user = user.text
     user_id = 1
-    answer = scrape_data(user)
+    answer = authenticate_with_login(user)
     print(answer)
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
     else:
-        followed_by = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_followed_by']['count'] # количество подписчиков
-        edge_follow = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_follow']['count'] # количество подписок
-        content_count = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
-        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['is_business_account']: # проверка, является ли акк бизнес
-            business_category = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['business_category_name'] # категория бизнеса
-            category_enum = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['category_enum'] # конкретная категория
+        followed_by = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_followed_by']['count'] # количество подписчиков
+        edge_follow = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_follow']['count'] # количество подписок
+        content_count = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['is_business_account']: # проверка, является ли акк бизнес
+            business_category = answer['entry_data']['ProfilePage'][0]['graphql']['user']['business_category_name'] # категория бизнеса
+            category_enum = answer['entry_data']['ProfilePage'][0]['graphql']['user']['category_enum'] # конкретная категория
         else:
             business_category = None
             category_enum = None
-        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['is_private']: # если аккаунт закрытый
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['is_private']: # если аккаунт закрытый
             photos = None
         else:
             photos = []
-            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']:
+            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']:
                 data = {
-                    'comments':edge['edges']['node']['edge_media_to_comment']['count'],
-                    'time':edge['edges']['node']['taken_at_timestamp'],
-                    'likes':edge['edges']['node']['edge_liked_by']['count']
+                    'comments':edge['edges'][0]['node']['edge_media_to_caption']['edge_media_to_comment']['count'],
+                    'time':edge['edges'][0]['node']['edge_media_to_caption']['taken_at_timestamp'],
+                    'likes':edge['edges'][0]['node']['edge_media_to_caption']['edge_liked_by']['count']
                         }
                 # комменты, время, лайки 
                 photos.append(data)
@@ -144,8 +173,7 @@ def send_text(message):
     # основная функция, отвечает за действия после нажатия кнопок
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
-        auth.authenticate_with_login()
-        #bot.register_next_step_handler(message, take_info)
+        bot.register_next_step_handler(message, take_info)
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
