@@ -81,6 +81,7 @@ Hashtags : *В РАЗРАБОТКЕ*
     user = user.text
     user_id = 1
     answer = scrape_data(user)
+    print(answer)
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
