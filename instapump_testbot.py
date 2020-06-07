@@ -6,14 +6,15 @@ from flask import Flask, request
 import os
 import auth
 
-TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw' 
+TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw'
 bot = telebot.TeleBot(TOKEN)
 
-server = Flask(__name__) # это строка нужна только при запуске на сервере
+server = Flask(__name__)  # это строка нужна только при запуске на сервере
 
 # КЛАВИАТУРЫ БУДУТ ТУТ
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
+
 
 # парсит сраный html
 def scrape_data(user):
@@ -22,22 +23,24 @@ def scrape_data(user):
 
     soup = bs(ask.text, 'html.parser')
     body = soup.find('body')
-    script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
+    script = body.find('script', text=lambda t: t.startswith('window._sharedData'))
 
     page_json = script.text.split(' = ', 1)[1].rstrip(';')
     data_json = json.loads(page_json)
 
     return data_json
 
+
 # установить количество знаков после запятой
 def toFixed(numObj, digits=0):
     return f"{numObj:.{digits}f}"
 
+
 def rating_count(user_info):
     followers = user_info['followed_by']
     try:
-        comments_count = sum([comment['comments'] for comment in user_info['photos_data']]) 
-        comments_percent = comments_count / 12 / followers 
+        comments_count = sum([comment['comments'] for comment in user_info['photos_data']])
+        comments_percent = comments_count / 12 / followers
     except TypeError:
         comments_percent = 0
 
@@ -46,12 +49,12 @@ def rating_count(user_info):
         likes_percent = likes_count / 12 / followers
     except TypeError:
         likes_percent = 0
-    try:   
+    try:
         all_times = [time['time'] for time in user_info['photos_data']]
         periods = []
         for period in all_times:
             try:
-                periods.append(period - all_times[all_times.index(period) +1])
+                periods.append(period - all_times[all_times.index(period) + 1])
             except IndexError:
                 break
         if periods == []:
@@ -62,6 +65,7 @@ def rating_count(user_info):
         mean_time = 0
     rating = followers * (1 + likes_percent * 0.85 + comments_percent * 0.15) * (1 + mean_time)
     return rating
+
 
 def take_info(user):
     PERSONAL = '''

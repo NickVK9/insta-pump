@@ -7,7 +7,7 @@ STORIES_UA = 'Instagram 123.0.0.21.114 (iPhone; CPU iPhone OS 11_4 like Mac OS X
 CHROME_WIN_UA = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'
 LOGIN_URL = BASE_URL + 'accounts/login/ajax/'
 
-LOGIN = 'instapump_support' # секретные данные акка
+LOGIN = 'instapump_support'  # секретные данные акка
 PASSWORD = 'wetryingtodothisabout1week'
 PHONE_NUMBER = '+79651139899'
 
@@ -18,6 +18,7 @@ authenticated = False
 logged_in = False
 rhx_gis = ""
 cookies = None
+
 
 def authenticate_with_login():
     """Logs in to instagram."""
@@ -38,7 +39,7 @@ def authenticate_with_login():
         ask = session.get(BASE_URL+'korepanov_nv')
         soup = bs(ask.text, 'html.parser')
         body = soup.find('body')
-        script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
+        script = body.find('script', text=lambda t: t.startswith('window._sharedData'))
 
         page_json = script.text.split(' = ', 1)[1].rstrip(';')
         data_json = json.loads(page_json)
