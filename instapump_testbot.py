@@ -19,7 +19,7 @@ LOGIN = 'instapump_support' # секретные данные акка
 PASSWORD = 'wetryingtodothisabout1week'
 PHONE_NUMBER = '+79651139899'
 
-session = requests.Session()
+session = req.Session()
 session.headers = {'user-agent': CHROME_WIN_UA}
 
 authenticated = False
