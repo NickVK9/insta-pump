@@ -58,6 +58,7 @@ def authenticate_with_login(user):
         print('Успешно спарсил')
     else:
         print('Login failed for ' + LOGIN)
+    return data_json
 # установить количество знаков после запятой
 def toFixed(numObj, digits=0):
     return f"{numObj:.{digits}f}"
