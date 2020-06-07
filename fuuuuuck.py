@@ -25,3 +25,5 @@ def scrape_data(user):
 
 
     return data_json
+
+scrape_data('korepanov_nv')
