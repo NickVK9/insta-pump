@@ -19,7 +19,7 @@ logged_in = False
 rhx_gis = ""
 cookies = None
 
-def authenticate_with_login():
+def authenticate_with_login(user):
     """Logs in to instagram."""
     session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
     req = session.get(BASE_URL)
@@ -35,7 +35,7 @@ def authenticate_with_login():
         session.headers.update({'user-agent': CHROME_WIN_UA})
         print('Удачно залогинился')
         print('Пробую взять инфу')
-        ask = session.get(BASE_URL+'korepanov_nv')
+        ask = session.get(BASE_URL+user)
         soup = bs(ask.text, 'html.parser')
         body = soup.find('body')
         script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
