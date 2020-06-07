@@ -4,6 +4,7 @@ import requests as req
 import json
 from flask import Flask, request
 import os
+import auth
 
 TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw' 
 bot = telebot.TeleBot(TOKEN)
@@ -139,7 +140,8 @@ def send_text(message):
     # основная функция, отвечает за действия после нажатия кнопок
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
-        bot.register_next_step_handler(message, take_info)
+        auth.authenticate_with_login()
+        #bot.register_next_step_handler(message, take_info)
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
