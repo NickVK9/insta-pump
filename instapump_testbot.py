@@ -134,11 +134,11 @@ Hashtags : *В РАЗРАБОТКЕ*
             photos = None
         else:
             photos = []
-            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']:
+            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges']:
                 data = {
-                    'comments':edge['edges'][0]['node']['edge_media_to_caption']['edge_media_to_comment']['count'],
-                    'time':edge['edges'][0]['node']['edge_media_to_caption']['taken_at_timestamp'],
-                    'likes':edge['edges'][0]['node']['edge_media_to_caption']['edge_liked_by']['count']
+                    'comments':edge['node']['edge_media_to_comment']['count'],
+                    'time':edge['node']['taken_at_timestamp'],
+                    'likes':edge['node']['edge_liked_by']['count']
                         }
                 # комменты, время, лайки 
                 photos.append(data)
