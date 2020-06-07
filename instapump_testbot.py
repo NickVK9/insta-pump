@@ -56,8 +56,6 @@ def authenticate_with_login(user):
         page_json = script.text.split(' = ', 1)[1].rstrip(';')
         data_json = json.loads(page_json)
         print('Успешно спарсил')
-        print('')
-        print(data_json)
     else:
         print('Login failed for ' + LOGIN)
 # установить количество знаков после запятой
