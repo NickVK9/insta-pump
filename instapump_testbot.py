@@ -141,7 +141,7 @@ def send_text(message):
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
         auth.authenticate_with_login()
-        #bot.register_next_step_handler(message, take_info)
+        bot.register_next_step_handler(message, take_info)
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
