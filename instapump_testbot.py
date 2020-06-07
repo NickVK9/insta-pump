@@ -118,20 +118,20 @@ Hashtags : *В РАЗРАБОТКЕ*
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
     else:
-        followed_by = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_followed_by']['count'] # количество подписчиков
-        edge_follow = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_follow']['count'] # количество подписок
-        content_count = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
-        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['is_business_account']: # проверка, является ли акк бизнес
-            business_category = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['business_category_name'] # категория бизнеса
-            category_enum = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['category_enum'] # конкретная категория
+        followed_by = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_followed_by']['count'] # количество подписчиков
+        edge_follow = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_follow']['count'] # количество подписок
+        content_count = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['is_business_account']: # проверка, является ли акк бизнес
+            business_category = answer['entry_data']['ProfilePage'][0]['graphql']['user']['business_category_name'] # категория бизнеса
+            category_enum = answer['entry_data']['ProfilePage'][0]['graphql']['user']['category_enum'] # конкретная категория
         else:
             business_category = None
             category_enum = None
-        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['is_private']: # если аккаунт закрытый
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['is_private']: # если аккаунт закрытый
             photos = None
         else:
             photos = []
-            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']:
+            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']:
                 data = {
                     'comments':edge['edges']['node']['edge_media_to_comment']['count'],
                     'time':edge['edges']['node']['taken_at_timestamp'],
