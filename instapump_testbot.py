@@ -133,9 +133,9 @@ Hashtags : *В РАЗРАБОТКЕ*
             photos = []
             for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']:
                 data = {
-                    'comments':edge['edges']['node']['edge_media_to_comment']['count'],
-                    'time':edge['edges']['node']['taken_at_timestamp'],
-                    'likes':edge['edges']['node']['edge_liked_by']['count']
+                    'comments':edge['edges'][0]['node']['edge_media_to_comment']['count'],
+                    'time':edge['edges'][0]['node']['taken_at_timestamp'],
+                    'likes':edge['edges'][0]['node']['edge_liked_by']['count']
                         }
                 # комменты, время, лайки 
                 photos.append(data)
