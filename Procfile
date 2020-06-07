@@ -1,1 +1,1 @@
-web: python fuuuuuck.py
+web: python auth.py
