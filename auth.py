@@ -62,8 +62,8 @@ def authenticate_with_login():
         print('Login failed for ' + LOGIN)
 
 
-
-authenticate_with_login()
+if __name__ == '__main__':
+    authenticate_with_login()
 
 
 
