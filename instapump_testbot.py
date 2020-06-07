@@ -16,16 +16,17 @@ KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
 
 # парсит сраный html
 def scrape_data(user):
-	ask = req.get('https://www.instagram.com/{}'.format(user))
+    headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
+    ask = req.get('https://www.instagram.com/{}'.format(user), headers=headers)
 
-	soup = bs(ask.text, 'html.parser')
-	body = soup.find('body')
-	script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
+    soup = bs(ask.text, 'html.parser')
+    body = soup.find('body')
+    script = body.find('script', text = lambda t: t.startswith('window._sharedData'))
 
-	page_json = script.text.split(' = ', 1)[1].rstrip(';')
-	data_json = json.loads(page_json)
+    page_json = script.text.split(' = ', 1)[1].rstrip(';')
+    data_json = json.loads(page_json)
 
-	return data_json
+    return data_json
 
 # установить количество знаков после запятой
 def toFixed(numObj, digits=0):
@@ -81,28 +82,29 @@ Hashtags : *В РАЗРАБОТКЕ*
     user = user.text
     user_id = 1
     answer = scrape_data(user)
+    print(answer)
     if answer == {}: # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
     else:
-        followed_by = answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']['edge_followed_by']['count'] # количество подписчиков
-        edge_follow = answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']['edge_follow']['count'] # количество подписок
-        content_count = answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
-        if answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']['is_business_account']: # проверка, является ли акк бизнес
-            business_category = answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']['business_category_name'] # категория бизнеса
-            category_enum = answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']['category_enum'] # конкретная категория
+        followed_by = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_followed_by']['count'] # количество подписчиков
+        edge_follow = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_follow']['count'] # количество подписок
+        content_count = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['edge_owner_to_timeline_media']['count'] # количество публикаций в акке
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['is_business_account']: # проверка, является ли акк бизнес
+            business_category = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['business_category_name'] # категория бизнеса
+            category_enum = answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['category_enum'] # конкретная категория
         else:
             business_category = None
             category_enum = None
-        if answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']['is_private']: # если аккаунт закрытый
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']['is_private']: # если аккаунт закрытый
             photos = None
         else:
             photos = []
-            for edge in answer['config']['entry_data']['ProfilePage']['graphql']['user']['biography']:
+            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']['biography']:
                 data = {
-                    'comments':edge['node']['edge_media_to_comment']['count'],
-                    'time':edge['node']['taken_at_timestamp'],
-                    'likes':edge['node']['edge_liked_by']['count']
+                    'comments':edge['edges']['node']['edge_media_to_comment']['count'],
+                    'time':edge['edges']['node']['taken_at_timestamp'],
+                    'likes':edge['edges']['node']['edge_liked_by']['count']
                         }
                 # комменты, время, лайки 
                 photos.append(data)
