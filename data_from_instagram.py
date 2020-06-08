@@ -80,7 +80,7 @@ def rating_count(user_info):
             mean_time = 1 / sum(periods) / 11 / 60 / 60 / 24
     except TypeError:
         mean_time = 0
-    rating = followers * (1 + likes_percent * 0.85 + comments_percent * 0.15) * (1 + mean_time)
+    rating = followers * (1 + 100*(likes_percent * 0.85 + comments_percent * 0.15)) * (1 + mean_time)
     return rating
 
 
