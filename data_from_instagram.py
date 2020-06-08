@@ -10,7 +10,7 @@ session = req.Session()
 session.headers = {'user-agent': CHROME_WIN_UA}
 
 # если запуск на тестовом боте, то TEST_TOKEN, иначе TOKEN
-TOKEN = TEST_TOKEN
+TOKEN = TOKEN
 bot = telebot.TeleBot(TOKEN)
 
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
