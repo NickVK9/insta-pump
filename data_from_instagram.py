@@ -5,6 +5,7 @@ import json
 from flask import Flask, request
 import os
 from global_names import BASE_URL, LOGIN_URL, STORIES_UA, CHROME_WIN_UA, LOGIN, PASSWORD, TOKEN, TEST_TOKEN
+import math
 
 session = req.Session()
 session.headers = {'user-agent': CHROME_WIN_UA}
@@ -80,7 +81,7 @@ def rating_count(user_info):
             mean_time = 1 / sum(periods) / 11 / 60 / 60 / 24
     except TypeError:
         mean_time = 0
-    rating = followers * (1 + 5*(likes_percent * 0.9 + comments_percent * 0.1)) * (1 + mean_time)
+    rating = math.sqrt(followers * (1 + math.e*(likes_percent * 0.8 + comments_percent * 0.2)) * (1 + mean_time))
     return rating
 
 
