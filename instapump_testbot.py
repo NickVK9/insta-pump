@@ -82,7 +82,7 @@ def send_text(message):
     # основная функция, отвечает за действия после нажатия кнопок
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
-        bot.register_next_step_handler(message, data_from_instagram.take_info(friend=0))
+        bot.register_next_step_handler(message, data_from_instagram.take_info(message, friend=0))
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
