@@ -152,4 +152,60 @@ Hashtags : *В РАЗРАБОТКЕ*
         )
         bot.send_message(message.chat.id, PERSONAL, reply_markup=KEYBOARD_TO_ACC)
 
+friends_rating(login):
+    FRIENDS_CARD = '''
+        💎Instagram Name: {inst_log}
+        🔸Тип профиля: {type}
 
+        👥Подписчики : {followers}
+        ❣Среднее кол-во лайков: {mean_like}
+        📊Рейтинг : {rating}
+        '''
+    message = user
+    user = user.text
+    user_id = 1
+    answer = authenticate_with_login(user)
+    if answer == {}:  # ввел несуществующего пользователя
+        bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
+        return None
+    else:
+        followed_by = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_followed_by']['count']  # количество подписчиков
+        edge_follow = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_follow']['count']  # количество подписок
+        content_count = answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['count']  # количество публикаций в акке
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['is_business_account']:  # проверка, является ли акк бизнес
+            business_category = answer['entry_data']['ProfilePage'][0]['graphql']['user']['business_category_name']  # категория бизнеса
+            category_enum = answer['entry_data']['ProfilePage'][0]['graphql']['user']['category_enum']  # конкретная категория
+        else:
+            business_category = None
+            category_enum = None
+        if answer['entry_data']['ProfilePage'][0]['graphql']['user']['is_private']:  # если аккаунт закрытый
+            photos = None
+        else:
+            photos = []
+            for edge in answer['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges']:
+                data = {
+                    'comments':edge['node']['edge_media_to_comment']['count'],
+                    'time':edge['node']['taken_at_timestamp'],
+                    'likes':edge['node']['edge_liked_by']['count']
+                        }
+                # комменты, время, лайки 
+                photos.append(data)
+        needed = {
+            'user_id':user_id, 'user_login':user, 
+            'followed_by':followed_by, 'subscribed_to':edge_follow, 
+            'publications':content_count, 'business_category':business_category, 
+            'subcategory':category_enum, 'photos_data':photos
+        }
+        user_id += 1
+        rating = rating_count(needed)
+        needed['user_rating'] = rating
+        likes_count = sum([like['likes'] for like in needed['photos_data']])
+        mean_like = likes_count / 12
+        PERSONAL = PERSONAL.format(
+            inst_log=user,
+            type=needed['subcategory'],
+            followers=needed['followed_by'],
+            mean_like=int(mean_like),
+            rating=toFixed(needed['user_rating'], 4)
+        )
+        bot.send_message(message.chat.id, PERSONAL, reply_markup=KEYBOARD_TO_ACC)
