@@ -16,6 +16,7 @@ bot = telebot.TeleBot(TOKEN)
 
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
+KEYBOARD_TO_ACC.row('Узнать рейтинг друга')
 
 
 # парсит сраный html
