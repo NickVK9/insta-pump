@@ -152,7 +152,7 @@ Hashtags : *В РАЗРАБОТКЕ*
         )
         bot.send_message(message.chat.id, PERSONAL, reply_markup=KEYBOARD_TO_ACC)
 
-friends_rating(login):
+def friends_rating(user):
     FRIENDS_CARD = '''
         💎Instagram Name: {inst_log}
         🔸Тип профиля: {type}
