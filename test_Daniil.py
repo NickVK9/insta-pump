@@ -26,7 +26,7 @@ def send_text(message):
     # основная функция, отвечает за действия после нажатия кнопок
     if message.text == 'Узнать рейтинг друга':
         bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
-        bot.register_next_step_handler(message, data_from_instagram.take_info(message.text, friend=1))
+        bot.register_next_step_handler(message, data_from_instagram.take_info)
     else:
         pass
 
