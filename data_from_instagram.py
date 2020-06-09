@@ -86,31 +86,21 @@ def rating_count(user_info):
 
 
 # главная функция, собирает вю инфу и вставляет в личный кабинет
-def take_info(user, friend):
-    if friend == 0:
-        PERSONAL = '''
-        💎 Telegram Name : {tg_log}
-        💎Instagram Name: {inst_log}
-        🔸Тип профиля: {type}
+def take_info(user):
+    PERSONAL = '''
+💎 Telegram Name : {tg_log}
+💎Instagram Name: {inst_log}
+🔸Тип профиля: {type}
 
-        👥Подписчики : {followers}
-        ❣Среднее кол-во лайков: {mean_like}
-        📊Рейтинг : {rating}
+👥Подписчики : {followers}
+❣Среднее кол-во лайков: {mean_like}
+📊Рейтинг : {rating}
 
-        📝Bio: *В РАЗРАБОТКЕ*
-        Hashtags : *В РАЗРАБОТКЕ*
+📝Bio: *В РАЗРАБОТКЕ*
+Hashtags : *В РАЗРАБОТКЕ*
 
-        Одобрен *В РАЗРАБОТКЕ*
-        '''
-    else:
-        PERSONAL = '''
-        💎Instagram Name: {inst_log}
-        🔸Тип профиля: {type}
-
-        👥Подписчики : {followers}
-        ❣Среднее кол-во лайков: {mean_like}
-        📊Рейтинг : {rating}
-        '''
+Одобрен *В РАЗРАБОТКЕ*
+'''
 #📨Реферальная ссылка: *В РАЗРАБОТКЕ*
     message = user
     user = user.text
@@ -152,24 +142,14 @@ def take_info(user, friend):
         needed['user_rating'] = rating
         likes_count = sum([like['likes'] for like in needed['photos_data']])
         mean_like = likes_count / 12
-        if friend == 0:
-            PERSONAL = PERSONAL.format(
-                tg_log=message.from_user.username,
-                inst_log=user,
-                type=needed['subcategory'],
-                followers=needed['followed_by'],
-                mean_like=int(mean_like),
-                rating=toFixed(needed['user_rating'], 4)
-            )
-        else:
-            PERSONAL = PERSONAL.format(
-                inst_log=user,
-                type=needed['subcategory'],
-                followers=needed['followed_by'],
-                mean_like=int(mean_like),
-                rating=toFixed(needed['user_rating'], 4)
-            )
+        PERSONAL = PERSONAL.format(
+            tg_log=message.from_user.username,
+            inst_log=user,
+            type=needed['subcategory'],
+            followers=needed['followed_by'],
+            mean_like=int(mean_like),
+            rating=toFixed(needed['user_rating'], 4)
+        )
         bot.send_message(message.chat.id, PERSONAL, reply_markup=KEYBOARD_TO_ACC)
-
 
 
