@@ -12,3 +12,5 @@ PHONE_NUMBER = '+79651139899'
 TEST_TOKEN = '966681948:AAGh0kkPeXK1CtEsqDAQEjVAFDF6sYuniew'
 
 TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw'
+
+HACHTAGS_LIST = ['Спорт', 'Бьюти', 'Охота и рыбалка', 'Правильно питание', 'Образование' ,'Бизнеc', 'Медицина и фармацевтика', 'Наука и техника', 'Автомобили и мотоциклы', 'Лайфстайл']
