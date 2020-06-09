@@ -5,7 +5,7 @@ import json
 from flask import Flask, request
 import os
 import data_from_instagram
-from global_names import TOKEN, HACHTAGS_LIST
+from global_names import *
 import time
 
 TOKEN = TOKEN

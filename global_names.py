@@ -14,3 +14,12 @@ TOKEN = '1124156274:AAFcflDj26OJnIcucf70mi7IlNdikylfGIw'
 DANIIL_TEST_TOKEN = 'ТВОЙ ТОКЕН'
 
 HACHTAGS_LIST = ['Спорт', 'Бьюти', 'Охота и рыбалка', 'Правильно питание', 'Образование' ,'Бизнеc', 'Медицина и фармацевтика', 'Наука и техника', 'Автомобили и мотоциклы', 'Лайфстайл']
+
+# postgres credentials
+HOST = 'ec2-54-217-236-206.eu-west-1.compute.amazonaws.com'
+DATABASE = 'd2ssbkf4ga9d3o'
+USER = 'guvxwdzgxdgawx'
+PORT = 5432
+PASSWORD = '9ebcc5b7dc6e10c31186138f66c909c23bd6111011ca39def0bec5e0d04aa13f'
+URI = 'postgres://guvxwdzgxdgawx:9ebcc5b7dc6e10c31186138f66c909c23bd6111011ca39def0bec5e0d04aa13f@ec2-54-217-236-206.eu-west-1.compute.amazonaws.com:5432/d2ssbkf4ga9d3o'
+HEROKU_CLI = 'heroku pg:psql postgresql-trapezoidal-82978 --app instapump'
