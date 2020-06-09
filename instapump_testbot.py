@@ -15,7 +15,6 @@ server = Flask(__name__)  # это строка нужна только при �
 # КЛАВИАТУРЫ БУДУТ ТУТ
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
-KEYBOARD_TO_ACC.row('Узнать рейтинг друга')
 
 KEYBOARD_HASHTAGS = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Спорт')
