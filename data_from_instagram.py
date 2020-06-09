@@ -154,7 +154,7 @@ Hashtags : *В РАЗРАБОТКЕ*
         bot.send_message(message.chat.id, PERSONAL, reply_markup=KEYBOARD_TO_ACC)
 
 def friends_rating(user):
-    FRIENDS_CARD = '''
+    PERSONAL = '''
         💎Instagram Name: {inst_log}
         🔸Тип профиля: {type}
 
