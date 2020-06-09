@@ -47,7 +47,7 @@ def authenticate_with_login(user):
         print('Успешно спарсил')
     else:
         print('Login failed for ' + LOGIN)
-        print('Код ответа: ' + login.status_code)
+        print('Код ответа: ', login.status_code)
     return data_json
 
 
