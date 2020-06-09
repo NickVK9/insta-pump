@@ -155,12 +155,12 @@ Hashtags : *В РАЗРАБОТКЕ*
 
 def friends_rating(user):
     PERSONAL = '''
-        💎Instagram Name: {inst_log}
-        🔸Тип профиля: {type}
+💎Instagram Name: {inst_log}
+🔸Тип профиля: {type}
 
-        👥Подписчики : {followers}
-        ❣Среднее кол-во лайков: {mean_like}
-        📊Рейтинг : {rating}
+👥Подписчики : {followers}
+❣Среднее кол-во лайков: {mean_like}
+📊Рейтинг : {rating}
         '''
     message = user
     user = user.text
