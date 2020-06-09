@@ -33,7 +33,7 @@ def bio(message):
     if len(message.text) > 650:
         bot.send_message(message.chat.id, 'Увы, длина превышает 650 символов:( \n \
             попробуй написать текст поменьше)')
-            return
+        return
     else:
         # тут мы будем записывать био в БД
         bot.send_message(message.chat.id, 'Отличное описание! Спасибо!')
