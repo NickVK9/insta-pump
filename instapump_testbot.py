@@ -99,6 +99,9 @@ def send_text(message):
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
         bot.register_next_step_handler(message, data_from_instagram.take_info)
+    elif message.text == 'Узнать рейтинг друга':
+        bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
+        bot.register_next_step_handler(message, data_from_instagram.friends_rating)
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
