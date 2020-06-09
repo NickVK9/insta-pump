@@ -15,6 +15,7 @@ server = Flask(__name__)  # это строка нужна только при �
 # КЛАВИАТУРЫ БУДУТ ТУТ
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
+KEYBOARD_TO_ACC.row('Узнать рейтинг друга')
 
 KEYBOARD_HASHTAGS = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Спорт')
@@ -82,7 +83,10 @@ def send_text(message):
     # основная функция, отвечает за действия после нажатия кнопок
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
-        bot.register_next_step_handler(message, data_from_instagram.take_info(message.text, friend=0))
+        bot.register_next_step_handler(message, data_from_instagram.take_info)
+    elif message.text == 'Узнать рейтинг друга':
+        bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
+        bot.register_next_step_handler(message, data_from_instagram.friends_rating)
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
