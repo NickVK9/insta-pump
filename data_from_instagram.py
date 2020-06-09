@@ -4,7 +4,7 @@ import requests as req
 import json
 from flask import Flask, request
 import os
-from global_names import BASE_URL, LOGIN_URL, STORIES_UA, CHROME_WIN_UA, LOGIN, PASSWORD, TOKEN, TEST_TOKEN
+from global_names import BASE_URL, LOGIN_URL, STORIES_UA, CHROME_WIN_UA, LOGIN, PASSWORD, TOKEN, TEST_TOKEN, DANIIL_TEST_TOKEN
 import math
 
 session = req.Session()

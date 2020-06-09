@@ -33,20 +33,16 @@ def bio(message):
     if len(message.text) > 650:
         bot.send_message(message.chat.id, 'Увы, длина превышает 650 символов:( \n \
             попробуй написать текст поменьше)')
-        return
     else:
         # тут мы будем записывать био в БД
         bot.send_message(message.chat.id, 'Отличное описание! Спасибо!')
-        return
 
 def hashtags(message):
     if message.text not in HACHTAGS_LIST:
         bot.send_message(message.chat.id, 'Используй кнопки!')
-        return
     else:
         # записываем хештег в таблицу
         bot.send_message(message.chat.id, 'Отличный выбор! Спасибо!')
-        return
 
 @bot.message_handler(commands=['start'])
 # обрабатывает действия после кнопки start
