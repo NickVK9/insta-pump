@@ -6,6 +6,7 @@ from flask import Flask, request
 import os
 from global_names import *
 import math
+from database import FakeOrm
 
 session = req.Session()
 session.headers = {'user-agent': CHROME_WIN_UA}
@@ -103,8 +104,12 @@ Hashtags : *В РАЗРАБОТКЕ*
 Одобрен *В РАЗРАБОТКЕ*
 '''
 #📨Реферальная ссылка: *В РАЗРАБОТКЕ*
+    database_connecter = FakeOrm()
     message = user
     user = user.text
+    database_connecter.tg_id = message.from_user.id
+    database_connecter.tg_log = message.from_user.username
+    database_connecter.inst_log = user
     user_id = 1
     answer = authenticate_with_login(user)
     if answer == {}:  # ввел несуществующего пользователя
@@ -144,6 +149,10 @@ Hashtags : *В РАЗРАБОТКЕ*
             needed['user_rating'] = rating
             likes_count = sum([like['likes'] for like in needed['photos_data']])
             mean_like = likes_count / 12
+            database_connecter.profile_type = needed['subcategory']
+            database_connecter.followers = needed['followed_by']
+            database_connecter.mean_likes = int(mean_like)
+            database_connecter.rating = toFixed(needed['user_rating'], 4)
             PERSONAL = PERSONAL.format(
                 tg_log=message.from_user.username,
                 inst_log=user,
@@ -152,6 +161,7 @@ Hashtags : *В РАЗРАБОТКЕ*
                 mean_like=int(mean_like),
                 rating=toFixed(needed['user_rating'], 4)
             )
+            database_connecter.telegram_insert()
             bot.send_message(message.chat.id, PERSONAL, reply_markup=KEYBOARD_TO_ACC)
         except KeyError:
             bot.send_message(message.chat.id, 'Вы ввели несуществующий аккаунт', reply_markup=KEYBOARD_TO_ACC)
