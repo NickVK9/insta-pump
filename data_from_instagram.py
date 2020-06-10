@@ -24,7 +24,6 @@ KEYBOARD_TO_ACC.row('Узнать рейтинг друга')
 def authenticate_with_login(user):
     """Logs in to instagram."""
     session = requests.Session()
-    '''
     session.headers = {'user-agent': CHROME_WIN_UA}
     session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
     req = session.get(BASE_URL)
@@ -36,15 +35,8 @@ def authenticate_with_login(user):
     session.headers.update({'X-CSRFToken': login.cookies['csrftoken']})
     login_text = json.loads(login.text)
     print(login_text)
-    '''
-    session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
-    req = session.get(BASE_URL)
 
-    session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
-
-    session.headers.update({'user-agent': CHROME_WIN_UA})
-    autication = True
-    if autication == True:#login_text.get('authenticated') and login.status_code == 200:
+    if login_text.get('authenticated') and login.status_code == 200:
         session.headers.update({'user-agent': CHROME_WIN_UA})
         print('Удачно залогинился')
         print('Пробую взять инфу')
@@ -58,8 +50,7 @@ def authenticate_with_login(user):
         print('Успешно спарсил')
     else:
         print('Login failed for ' + LOGIN)
-        #print('Код ответа: ', login.status_code)
-    print(data_json)
+        print('Код ответа: ', login.status_code)
     return data_json
 
 
