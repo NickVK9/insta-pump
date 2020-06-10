@@ -24,7 +24,7 @@ KEYBOARD_TO_ACC.row('Узнать рейтинг друга')
 def authenticate_with_login(user):
     """Logs in to instagram."""
     session = requests.Session()
-    session.headers = {'user-agent': STORIES_UA}
+    session.headers = {'user-agent': CHROME_WIN_UA}
     session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
     req = session.get(BASE_URL)
 
