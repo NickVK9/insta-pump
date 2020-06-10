@@ -124,7 +124,7 @@ Hashtags : *В РАЗРАБОТКЕ*
     database_connecter.inst_log = user
     user_id = 1
     answer = authenticate_with_login(user)
-    if answer == {}:  # ввел несуществующего пользователя
+    if answer == 'zuba':  # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
     else:
