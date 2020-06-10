@@ -1,6 +1,6 @@
 import telebot
 from bs4 import BeautifulSoup as bs
-import requests as req
+import requests 
 import json
 from flask import Flask, request
 import os
