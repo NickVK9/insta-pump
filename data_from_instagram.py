@@ -59,6 +59,7 @@ def authenticate_with_login(user):
     else:
         print('Login failed for ' + LOGIN)
         #print('Код ответа: ', login.status_code)
+    print(data_json)
     return data_json
 
 
@@ -124,7 +125,7 @@ Hashtags : *В РАЗРАБОТКЕ*
     database_connecter.inst_log = user
     user_id = 1
     answer = authenticate_with_login(user)
-    if answer == 'zuba':  # ввел несуществующего пользователя
+    if answer == {}:  # ввел несуществующего пользователя
         bot.send_message(message.chat.id, 'Такого пользователя не существует, попробуйте еще раз', reply_markup=KEYBOARD_TO_ACC)
         return None
     else:
