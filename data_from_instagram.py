@@ -27,6 +27,7 @@ def authenticate_with_login(user):
     session.headers = {'user-agent': CHROME_WIN_UA}
     session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
     req = session.get(BASE_URL)
+    print(req.content)
 
     session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
 
