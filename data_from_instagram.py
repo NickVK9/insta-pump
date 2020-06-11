@@ -27,15 +27,16 @@ def authenticate_with_login(user):
     session.headers = {'user-agent': CHROME_WIN_UA}
     session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
     req = session.get(BASE_URL)
+    print(session.headers)
     
     session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
     
     login_data = {'username': LOGIN, 'password': PASSWORD}
     login = session.post(LOGIN_URL, data=login_data, allow_redirects=True)
-    session.headers.update({'X-CSRFToken': '6VCoNLkNqxLdBpsyhw6SnWLnCl37SUXC'})
+    session.headers.update({'X-CSRFToken': login.cookies['csrftoken']})
+    print(login.cookies)
     login_text = json.loads(login.text)
     print(login_text)
-    #login.cookies['csrftoken']
     
     if login_text.get('authenticated') and login.status_code == 200:
         session.headers.update({'user-agent': CHROME_WIN_UA})
