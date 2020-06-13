@@ -112,8 +112,9 @@ def send_text(message):
 
             datas = json.loads(stringified_json)['entry_data']['ProfilePage'][0]
             bot.send_message(message.chat.id, datas['graphql']['user']['biography'])
-        except:
+        except Exception as e:
             bot.send_message(message.chat.id, 'Сори не вышло')
+            bot.send_message(message.chat.id, str(e))
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
