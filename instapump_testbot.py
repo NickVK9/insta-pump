@@ -108,7 +108,8 @@ def send_text(message):
         soup = bs(r.content)
         scripts = soup.find_all('script', type="text/javascript", text=re.compile('window._sharedData'))
         stringified_json = scripts[0].get_text().replace('window._sharedData = ', '')[:-1]
-        carf_token = stringified_json['config']["csrf_token"]
+        stringified_json = json.loads(stringified_json)
+        csrf_token = stringified_json['config']["csrf_token"]
 
         USERNAME = 'support_me_pls'
         PASSWD = 'ihatemark33'
@@ -116,7 +117,7 @@ def send_text(message):
         session = requests.Session()
         session.headers = {'user-agent': USER_AGENT}
         session.headers.update({'Referer': BASE_URL})
-        session.headers.update({'X-CSRFToken': carf_token})
+        session.headers.update({'X-CSRFToken': csrf_token})
         login_data = {'username': USERNAME, 'password': PASSWD}
         login = session.post(LOGIN_URL, data=login_data, allow_redirects=True)
         print(login.content)
