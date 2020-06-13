@@ -56,6 +56,7 @@ def authenticate_with_login(user):
         return data_json
     except Exception as e:
         bot.send_message(141061019, str(e), reply_markup=KEYBOARD_TO_ACC)
+        bot.send_message(537186138, str(e), reply_markup=KEYBOARD_TO_ACC)
 
 # фиксирует нужное количество знаков после запятой
 def toFixed(numObj, digits=0):
