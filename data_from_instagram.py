@@ -24,11 +24,11 @@ KEYBOARD_TO_ACC.row('Узнать рейтинг друга')
 def authenticate_with_login(user):
     """Logs in to instagram."""
     session = requests.Session()
-    session.headers = {'user-agent': CHROME_WIN_UA}
-    session.headers.update({'Referer': BASE_URL, 'user-agent': STORIES_UA})
+    session.headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'}
+    session.headers.update({'Referer': BASE_URL, 'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7'})
     req = session.get(BASE_URL)
     
-    session.headers.update({'X-CSRFToken': req.cookies['csrftoken']})
+    session.headers.update({'X-CSRFToken': "9ul0smD34ycPOcC9zMDzPRrorshoSrmM"})
     
     login_data = {'username': LOGIN, 'password': PASSWORD}
     login = session.post(LOGIN_URL, data=login_data, allow_redirects=True)

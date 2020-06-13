@@ -7,6 +7,7 @@ import os
 import data_from_instagram
 from global_names import *
 import time
+import re
 
 TOKEN = TOKEN
 bot = telebot.TeleBot(TOKEN)
@@ -102,6 +103,17 @@ def send_text(message):
     elif message.text == 'Узнать рейтинг друга':
         bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
         bot.register_next_step_handler(message, data_from_instagram.friends_rating)
+    elif message.text == 'тест':
+        try:
+            r = requests.get('https://www.instagram.com/korepanov_nv/')
+            soup = bs(r.content)
+            scripts = soup.find_all('script', type="text/javascript", text=re.compile('window._sharedData'))
+            stringified_json = scripts[0].get_text().replace('window._sharedData = ', '')[:-1]
+
+            datas = json.loads(stringified_json)['entry_data']['ProfilePage'][0]
+            bot.send_message(message.chat.id, datas['graphql']['user']['biography'])
+        except:
+            bot.send_message(message.chat.id, 'Сори не вышло')
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
