@@ -105,7 +105,7 @@ def send_text(message):
         bot.register_next_step_handler(message, data_from_instagram.friends_rating)
     elif message.text == 'тест':
         r = requests.get('https://www.instagram.com/korepanov_nv/')
-        soup = bs(r.content, 'lxml')
+        soup = bs(r.content)
         scripts = soup.find_all('script', type="text/javascript", text=re.compile('window._sharedData'))
         stringified_json = scripts[0].get_text().replace('window._sharedData = ', '')[:-1]
         print(stringified_json)
