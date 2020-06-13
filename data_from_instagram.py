@@ -53,8 +53,10 @@ def authenticate_with_login(user):
     else:
         print('Login failed for ' + LOGIN)
         print('Код ответа: ', login.status_code)
-    return data_json
-
+    try:
+        return data_json
+    except Exception as e:
+        bot.send_message(message.chat.id, str(e), reply_markup=KEYBOARD_TO_ACC)
 
 # фиксирует нужное количество знаков после запятой
 def toFixed(numObj, digits=0):
