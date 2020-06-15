@@ -8,6 +8,7 @@ import data_from_instagram
 from global_names import *
 import time
 import re
+from InstagramAPI import InstagramAPI
 
 TOKEN = TOKEN
 bot = telebot.TeleBot(TOKEN)
@@ -104,25 +105,25 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
         bot.register_next_step_handler(message, data_from_instagram.friends_rating)
     elif message.text == 'тест':
-        r = requests.get('https://www.instagram.com/korepanov_nv/')
-        soup = bs(r.content)
-        scripts = soup.find_all('script', type="text/javascript", text=re.compile('window._sharedData'))
-        stringified_json = scripts[0].get_text().replace('window._sharedData = ', '')[:-1]
-        stringified_json = json.loads(stringified_json)
-        csrf_token = stringified_json['config']["csrf_token"]
+        api = InstagramAPI(LOGIN, PASSWORD)
 
-        USERNAME = 'support_me_pls'
-        PASSWD = 'ihatemark33'
-        USER_AGENT = "Mozilla/5.0 (Windows NT 5.1; rv:41.0) Gecko/20100101"
-        session = requests.Session()
-        session.headers = {'user-agent': USER_AGENT}
-        session.headers.update({'Referer': BASE_URL})
-        session.headers.update({'X-CSRFToken': csrf_token})
-        login_data = {'username': USERNAME, 'password': PASSWD}
-        login = session.post(LOGIN_URL, data=login_data, allow_redirects=True)
-        print(login.content)
-        #datas = json.loads(stringified_json)['entry_data']['ProfilePage'][0]
-        #bot.send_message(message.chat.id, datas['graphql']['user']['biography'])
+        users_list = []
+
+
+        def get_likes_list(username):
+            api.login()
+            api.searchUsername(username)
+            result = api.LastJson
+            username_id = result['user']['pk'] # Get user ID
+            user_posts = api.getUserFeed(username_id) # Get user feed
+            result = api.LastJson
+            media_id = result['items'][0]['id'] # Get most recent post
+            api.getMediaLikers(media_id) # Get users who liked
+            users = api.LastJson['users']
+            for user in users: # Push users to list
+                users_list.append({'pk':user['pk'], 'username':user['username']})
+        get_likes_list('korepanov_nv')
+        bot.send_message(message.chat.id, users_list)
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
