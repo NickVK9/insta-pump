@@ -62,7 +62,6 @@ def authenticate_with_login(user):
 def toFixed(numObj, digits=0):
     return f"{numObj:.{digits}f}"
 
-
 # считает рейтинг каждого юзера
 def rating_count(user_info):
     followers = user_info['followed_by']
