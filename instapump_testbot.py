@@ -105,7 +105,7 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
         bot.register_next_step_handler(message, data_from_instagram.friends_rating)
     elif message.text == 'тест':
-        api = InstagramAPI(LOGIN, PASSWORD)
+        api = InstagramAPI('support_me_pls', 'ihatemark33')
 
         users_list = []
 
