@@ -10,8 +10,8 @@ CHROME_WIN_UA = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML,
 # #Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36
 # #Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36
 # #Instagram 123.0.0.21.114 (iPhone; CPU iPhone OS 11_4 like Mac OS X; en_US; en-US; scale=2.00; 750x1334) AppleWebKit/605.1.15
-LOGIN = 'support_me_pls'  # секретные данные акка
-PASSWORD = 'ihatemark33'
+LOGIN = 'zaribrown37'  # секретные данные акка
+PASSWORD = 'youknowguysblm123'
 PHONE_NUMBER = '+380916072406'
 # LOGIN = 'instapump_support'  # секретные данные акка
 # PASSWORD = 'wetryingtodothisabout1week'
