@@ -145,8 +145,8 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
         bot.register_next_step_handler(message, data_from_instagram.friends_rating)
     elif message.text == 'тест':
-        bot.send_message(message.chat.id, 'Enter login for test:')
-        bot.register_next_step_handler(message, search)
+        bot.send_message(message.chat.id, 'Printed info in logs:')
+        search('korepanov_nv')
 # на локалхосте раскоментить
 #bot.polling()
 
