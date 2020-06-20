@@ -1,5 +1,4 @@
 from InstagramAPI import InstagramAPI
-import json
 
 def parse_time(l): #timestamps to mean difference between them in days
 	t = 0
