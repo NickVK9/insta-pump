@@ -62,7 +62,7 @@ def search(login): #search procedure
 		mean_time.append(result['items'][i]['taken_at'])
 	mean_time = parse_time(mean_time) 
 	
-	bot.send_message(login.chat.id, 'Login: {}'.format(login))
+	bot.send_message(login.chat.id, 'Login: {}'.format(login.text))
 	bot.send_message(login.chat.id, 'Followers: {}'.format(followers))
 	bot.send_message(login.chat.id, 'Following: {}'.format(following))
 	bot.send_message(login.chat.id, 'Publications count: {}'.format(media_count))
