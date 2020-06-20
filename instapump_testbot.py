@@ -148,7 +148,7 @@ def send_text(message):
 		bot.register_next_step_handler(message, data_from_instagram.friends_rating)
 	elif message.text == 'тест':
 		bot.send_message(message.chat.id, 'Enter login:')
-		bot.register_next_step_handler(message, search)
+		bot.register_next_step_handler(message.text, search)
         
 # на локалхосте раскоментить
 #bot.polling()
