@@ -46,6 +46,8 @@ def search(login): #search procedure
 	api.searchUsername(login)
 	result = api.LastJson
 	
+	print(result)
+	
 	followers = result['user']['follower_count'] #getting info from account
 	following = result['user']['following_count']
 	media_count = result['user']['media_count']
