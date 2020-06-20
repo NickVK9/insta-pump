@@ -43,10 +43,8 @@ def search(login): #search procedure
 
 	api = InstagramAPI('zaribrown37', 'youknowguysblm123')
 	api.login()
-	api.searchUsername(login)
+	api.searchUsername(login.text)
 	result = api.LastJson
-	
-	print(result)
 	
 	followers = result['user']['follower_count'] #getting info from account
 	following = result['user']['following_count']
@@ -64,15 +62,15 @@ def search(login): #search procedure
 		mean_time.append(result['items'][i]['taken_at'])
 	mean_time = parse_time(mean_time) 
 	
-	bot.send_message(message.chat.id, 'Login: {}'.format(login))
-	bot.send_message(message.chat.id, 'Followers: {}'.format(followers))
-	bot.send_message(message.chat.id, 'Following: {}'.format(following))
-	bot.send_message(message.chat.id, 'Publications count: {}'.format(media_count))
-	bot.send_message(message.chat.id, 'Category: {}'.format(category))
-	bot.send_message(message.chat.id, 'Mean likes: {}'.format(round(mean_likes, 2)))
-	bot.send_message(message.chat.id, 'Mean comments: {}'.format(round(mean_comments, 2)))
-	bot.send_message(message.chat.id, 'Mean time between publications(days): {}'.format(round(mean_time, 3)))
-	bot.send_message(message.chat.id, 'Bio: {}'.format(biography))
+	bot.send_message(login.chat.id, 'Login: {}'.format(login))
+	bot.send_message(login.chat.id, 'Followers: {}'.format(followers))
+	bot.send_message(login.chat.id, 'Following: {}'.format(following))
+	bot.send_message(login.chat.id, 'Publications count: {}'.format(media_count))
+	bot.send_message(login.chat.id, 'Category: {}'.format(category))
+	bot.send_message(login.chat.id, 'Mean likes: {}'.format(round(mean_likes, 2)))
+	bot.send_message(login.chat.id, 'Mean comments: {}'.format(round(mean_comments, 2)))
+	bot.send_message(login.chat.id, 'Mean time between publications(days): {}'.format(round(mean_time, 3)))
+	bot.send_message(login.chat.id, 'Bio: {}'.format(biography))
 
 def bio(message):
     if len(message.text) > 650:
@@ -148,7 +146,7 @@ def send_text(message):
 		bot.register_next_step_handler(message, data_from_instagram.friends_rating)
 	elif message.text == 'тест':
 		bot.send_message(message.chat.id, 'Enter login:')
-		bot.register_next_step_handler(message.text, search)
+		bot.register_next_step_handler(message, search)
         
 # на локалхосте раскоментить
 #bot.polling()
