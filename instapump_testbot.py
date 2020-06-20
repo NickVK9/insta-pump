@@ -138,15 +138,15 @@ def start_message(message):
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     # основная функция, отвечает за действия после нажатия кнопок
-    if message.text == 'Сформировать личный кабинет':
-        bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
-        bot.register_next_step_handler(message, data_from_instagram.take_info)
-    elif message.text == 'Узнать рейтинг друга':
-        bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
-        bot.register_next_step_handler(message, data_from_instagram.friends_rating)
-    elif message.text == 'тест':
-	bot.send_message(message.chat.id, 'Enter login:')
-	bot.register_next_step_handler(message, search)
+	if message.text == 'Сформировать личный кабинет':
+		bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
+		bot.register_next_step_handler(message, data_from_instagram.take_info)
+	elif message.text == 'Узнать рейтинг друга':
+		bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
+		bot.register_next_step_handler(message, data_from_instagram.friends_rating)
+	elif message.text == 'тест':
+		bot.send_message(message.chat.id, 'Enter login:')
+		bot.register_next_step_handler(message, search)
         
 # на локалхосте раскоментить
 #bot.polling()
