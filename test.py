@@ -7,6 +7,7 @@ import os
 import data_from_instagram
 from global_names import TEST_TOKEN, HACHTAGS_LIST
 import time
+from InstagramAPI import InstagramAPI
 
 TOKEN = TEST_TOKEN 
 bot = telebot.TeleBot(TOKEN)
@@ -15,6 +16,7 @@ bot = telebot.TeleBot(TOKEN)
 # КЛАВИАТУРЫ БУДУТ ТУТ
 KEYBOARD_TO_ACC = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_TO_ACC.row('Сформировать личный кабинет')
+KEYBOARD_TO_ACC.row('test')
 
 
 KEYBOARD_HASHTAGS = telebot.types.ReplyKeyboardMarkup(True)
@@ -99,6 +101,26 @@ def send_text(message):
     if message.text == 'Сформировать личный кабинет':
         bot.send_message(message.chat.id, 'Введи свой инстаграм логин:')
         bot.register_next_step_handler(message, data_from_instagram.take_info)
+    elif message.text == 'test':
+        api = InstagramAPI('zaribrown37', 'youknowguysblm123')
+        '''
+        api.login()
+        api.searchUsername('korepanov_nv')
+        result = api.LastJson
+        id = result['user']['pk']
+        api.getTotalUserFeed(id)
+        media = api.LastJson
+        '''
+        api.login()
+        api.searchUsername('korepanov_nv')
+        result = api.LastJson
+        username_id = result['user']['pk'] # Get user ID
+        user_posts = api.getUserFeed(username_id) # Get user feed
+        result = api.LastJson
+        counter = 0
+        for i in result['items']:
+            counter += 1
+        bot.send_message(message.chat.id, 'Получилось, фоток: {}'.format(counter) )
     else:
         bot.send_message(message.chat.id, 'Используй кнопки!')
 
