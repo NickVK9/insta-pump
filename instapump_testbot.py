@@ -31,6 +31,46 @@ KEYBOARD_HASHTAGS.row('Наука и техника')
 KEYBOARD_HASHTAGS.row('Автомобили и мотоциклы')
 KEYBOARD_HASHTAGS.row('Лайфстайл')
 
+def parse_time(l): #timestamps to mean difference between them in days
+	t = 0
+	for i in range(len(l) - 1):
+		t += (l[i] - l[i+1]) / (len(l) - 1)
+	return t / 86400
+
+def search(user): #search procedure
+	mean_likes = 0; mean_comments = 0; mean_time = list()
+	followers = 0; following = 0; media_count = 0
+
+	api = InstagramAPI('zaribrown37', 'youknowguysblm123')
+	api.login()
+	api.searchUsername(user)
+	result = api.LastJson
+	
+	followers = result['user']['follower_count'] #getting info from account
+	following = result['user']['following_count']
+	media_count = result['user']['media_count']
+	biography = result['user']['biography']
+	category = result['user']['category']
+
+	username_id = result['user']['pk'] # Get user ID
+	user_posts = api.getUserFeed(username_id) # Get user feed
+	result = api.LastJson 
+
+	for i in range(18): #getting info from last 18 publications
+		mean_likes += result['items'][i]['like_count'] / 18
+		mean_comments += result['items'][i]['comment_count'] / 18
+		mean_time.append(result['items'][i]['taken_at'])
+	mean_time = parse_time(mean_time) 
+
+	print('User: ', user) #printing info
+	print('Followers: ', followers)
+	print('Following: ', following)
+	print('Publications count: ', media_count)
+	print('Category: ', category)
+	print('Mean likes', round(mean_likes, 2))
+	print('Mean comments: ', round(mean_comments, 2))
+	print('Mean time between publications(days): ', round(mean_time, 3))
+	print('Bio: ', biography)
 
 def bio(message):
     if len(message.text) > 650:
@@ -105,29 +145,8 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Введи инстаграм логин друга:')
         bot.register_next_step_handler(message, data_from_instagram.friends_rating)
     elif message.text == 'тест':
-        api = InstagramAPI('zaribrown37', 'youknowguysblm123')
-
-        users_list = []
-
-
-        def get_likes_list(username):
-            api.login()
-            api.searchUsername(username)
-            result = api.LastJson
-            username_id = result['user']['pk'] # Get user ID
-            user_posts = api.getUserFeed(username_id) # Get user feed
-            result = api.LastJson
-            media_id = result['items'][0]['id'] # Get most recent post
-            api.getMediaLikers(media_id) # Get users who liked
-            users = api.LastJson['users']
-            for user in users: # Push users to list
-                users_list.append({'pk':user['pk'], 'username':user['username']})
-        get_likes_list('korepanov_nv')
-        print(users_list)
-        bot.send_message(message.chat.id, users_list)
-    else:
-        bot.send_message(message.chat.id, 'Используй кнопки!')
-
+        bot.send_message(message.chat.id, 'Enter login for test:')
+        bot.register_next_step_handler(message, search)
 # на локалхосте раскоментить
 #bot.polling()
 
