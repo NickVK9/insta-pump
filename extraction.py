@@ -61,10 +61,8 @@ def search(user): #search procedure
 ❣Среднее кол-во лайков: {mean_like}
 📊Рейтинг : {rating}
 
-📝Bio: *В РАЗРАБОТКЕ*
-Hashtags : *В РАЗРАБОТКЕ*
-
-Одобрен *В РАЗРАБОТКЕ*
+📝Bio: {bio}
+Hashtags : {hashtg}
 '''
     mean_likes = 0; mean_comments = 0; mean_time = list()
     followers = 0; following = 0; media_count = 0
@@ -87,7 +85,7 @@ Hashtags : *В РАЗРАБОТКЕ*
     try:
         category = result['user']['category']
     except:
-        print('Категории нет')
+        category = 'Не бизнес аккаунт'
 
     username_id = result['user']['pk'] # Get user ID
     try:
@@ -98,20 +96,32 @@ Hashtags : *В РАЗРАБОТКЕ*
             mean_comments += result['items'][i]['comment_count'] / len(result['items'])
             mean_time.append(result['items'][i]['taken_at'])
     except:
-        print('Нет медиа')
+        mean_likes = 0
+        mean_comments = 0
+        mean_time = []
     mean_time = parse_time(mean_time) 
 
     rating = 10 # полставить функцию
+    curs = conn.cursor()
+    curs.execute('SELECT bio FROM users WHERE tg_id = {}'.format(message.from_user.id))
+    bio = curs.fetchone()
+    print('Bio', bio)
+    bio = bio[0]
+    curs.execute('SELECT hashtags FROM users WHERE tg_id = {}'.format(message.from_user.id))
+    hashtg = curs.fetchone()
+    print('Hash', hashtg)
+    hashtg = hashtg[0]
     PERSONAL = PERSONAL.format(
                 tg_log=message.from_user.username,
                 inst_log=user,
                 type=category,
                 followers=followers,
                 mean_like=round(mean_likes, 2),
-                rating=rating
+                rating=rating,
+                bio=bio,
+                hashtg=hashtg
             )
-    curs = conn.cursor()
-    curs.execute("INSERT INTO users(inst_log, profile_type, followers, mean_likes, rating) VALUES (%s, %s, %s, %s, %s) WHERE tg_id = %s", (user, category, followers, mean_likes, rating, message.from_user.id))
+    curs.execute('UPDATE users SET inst_log= %s, profile_type= %s, followers= %s, mean_likes= %s, rating= %s WHERE tg_id= %s', (user, category, followers, mean_likes, rating, message.from_user.id))
     conn.commit()
     conn.close()
     return PERSONAL
@@ -127,3 +137,46 @@ Hashtags : *В РАЗРАБОТКЕ*
 	print('Bio: ', biography)	
     '''
 
+def friends_rating(user):
+    user = user.text
+    user = user.lower()
+    user = user.strip()
+    PERSONAL = """
+💎Instagram Name: {inst_log}
+🔸Тип профиля: {type}
+
+👥Подписчики : {followers}
+❣Среднее кол-во лайков: {mean_like}
+📊Рейтинг : {rating}
+"""
+    api = InstagramAPI('zaribrown37', 'youknowguysblm123')
+    api.login()
+    api.searchUsername(user)
+    result = api.LastJson
+    followers = result['user']['follower_count']
+    try:
+        category = result['user']['category']
+    except:
+        category = 'Не бизнес аккаунт'
+    username_id = result['user']['pk'] # Get user ID
+    try:
+        user_posts = api.getUserFeed(username_id) # Get user feed
+        result = api.LastJson
+        for i in range(len(result['items'])): #getting info from last 18 publications
+            mean_likes += result['items'][i]['like_count'] / len(result['items'])
+            mean_comments += result['items'][i]['comment_count'] / len(result['items'])
+            mean_time.append(result['items'][i]['taken_at'])
+    except:
+        mean_likes = 0
+        mean_comments = 0
+        mean_time = []
+    rating = 10 # посчитать
+    PERSONAL = PERSONAL.format(
+                inst_log=user,
+                type=category,
+                followers=followers,
+                mean_like=round(mean_likes, 2),
+                rating=rating
+            )
+    '''Может сделать после рейтинга друга кнопку "пригласить друга"'''
+    return PERSONAL 
