@@ -3,7 +3,7 @@ import math
 import psycopg2
 
 conn = psycopg2.connect(dbname='postgres', user='postgres', 
-                        password='simplyclever343', 
+                        password='password', 
                         host='localhost',
                         port=5432)
 
