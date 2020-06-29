@@ -1,1 +1,1 @@
-web: python instapump_testbot.py
+web: python autolikes.py

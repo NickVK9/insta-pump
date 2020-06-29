@@ -44,9 +44,8 @@ KEYBOARD_WHO_AM_I.row('Я хочу найти блогера для реклам
 
 KEYBOARD_MENU = telebot.types.ReplyKeyboardMarkup(True)
 KEYBOARD_MENU.row('Посмотреть рейтинг друга') # DONE
-KEYBOARD_MENU.row('Создать заявку на коллаборацию')
+KEYBOARD_MENU.row('Посмотреть других юзеров для коллаборации')
 KEYBOARD_MENU.row('Топ юзеров бота') # DONE
-KEYBOARD_MENU.row('Посмотреть заявки на коллаборации')
 KEYBOARD_MENU.row('Посмотреть заявки на рекламу')
 KEYBOARD_MENU.row('Мои заявки')
 KEYBOARD_MENU.row('Настройки')
@@ -57,6 +56,21 @@ KEYBOARD_SETTINGS.row('Сменить hashtag')
 KEYBOARD_SETTINGS.row('Вопросы/предложения')
 KEYBOARD_SETTINGS.row('Верификация')
 KEYBOARD_SETTINGS.row('Вернутся в меню')
+
+KEYBOARD_MY_OR_NOT = telebot.types.ReplyKeyboardMarkup(True)
+KEYBOARD_MY_OR_NOT.row('Только моя', 'Все')
+
+def collab(message):
+    if message.text == 'Только моя':
+        curs = conn.cursor()
+        curs.execute('SELECT hashtags FROM users WHERE tg_id = {}'.format(message.from_user.id))
+        hashtag = curs.fetchone()
+        hashtag = hashtag[0]
+        curs.execute('SELECT inst_log, hashtags, rating FROM users')
+    elif message.text == 'Все':
+        pass
+    else:
+        bot.send_message(message.chat.id, 'Используй кнопки', reply_markup=KEYBOARD_MENU)
 
 def friend(message):
     try:
@@ -170,6 +184,9 @@ def send_text(message):
             followers1=followers1, followers2=followers2, followers3=followers3, followers4=followers4, followers5=followers5, followers6=followers6, followers7=followers7, followers8=followers8, followers9=followers9, followers10=followers10
         )
         bot.send_message(message.chat.id, info, reply_markup=KEYBOARD_MENU)
+    elif message.text == 'Посмотреть других юзеров для коллаборации':
+        bot.send_message(message.chat.id, 'Искать блоггеров в вашей категории или во всех?', reply_markup=KEYBOARD_MY_OR_NOT)
+        bot.register_next_step_handler(message, collab)
     else:
         bot.send_message(message.chat.id, 'Пожалуйста, используй клавиатуру', reply_markup=KEYBOARD_MENU)
 
