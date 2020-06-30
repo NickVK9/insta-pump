@@ -109,10 +109,11 @@ def like(message, users_list, api):
             api.getUserFeed(user_id)
             print('публикашки взял')
             try:
-                user_media_id = api.LastJson['items'][0]['pk']
-                api.like(user_media_id)
+                user_media_id = api.LastJson
+                user_media_id1 = user_media_id['items'][0]['pk']
+                api.like(user_media_id1)
                 print('LIKED 1')
-                user_media_id2 = api.LastJson['items'][1]['pk']
+                user_media_id2 = user_media_id['items'][1]['pk']
                 api.like(user_media_id2)
                 print('LIKED 2')
                 counter += 1
