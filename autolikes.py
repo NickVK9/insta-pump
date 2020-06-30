@@ -49,7 +49,7 @@ def auth(message):
 @bot.message_handler(commands=['start'])
 def start_message(message):
     curs = conn.cursor()
-    curs.execute("INSERT INTO target(tg_id) VALUES ({})".format(message.from_user.id))
+    curs.execute("INSERT INTO target(tg_id) VALUES (%s)", (message.from_user.id))
     conn.commit()
     bot.send_message(message.chat.id, 'Бот для привлечения на твой аккаунт целевой аудитории')
     bot.send_message(message.chat.id, 'Вы предоставляете боту данные своего аккаунта.\nОн под вашим аккаунтом лайкает активных подписчиков ваших конкурентов.\nПодписчики заходят на ваш аккаунт и видит интересную для себя информацию и подписывается на вас.')
