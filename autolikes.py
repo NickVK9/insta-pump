@@ -97,10 +97,16 @@ def like(message, users_list, api):
             bot.send_message(message.chat.id, 'Лайкнул 20, осталось: {}'.format(len(users_list)-(20*counter2)))
             counter = 0
             print('Лайкнул 20, осталось: {}'.format(len(users_list)-(20*counter2)))
+        print('засыпаю')
         sleep(random.randint(20, 40))
+        print('отоспался')
+        print('проверяю на приват')
         if user['is_private'] == False:
+            print('не приватный, беру айди')
             user_id = user['pk']
+            print('беру публикации')
             api.getUserFeed(user_id)
+            print('публикашки взял')
             try:
                 user_media_id = api.LastJson['items'][0]['pk']
                 api.like(user_media_id)
