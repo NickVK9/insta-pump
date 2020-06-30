@@ -88,7 +88,7 @@ def get_likes_list(username, api):
 
 
 def like(message, users_list, api):
-    users_list = users_list[:5]
+    users_list = users_list[:370]
     counter = 0
     counter2 = 0 
     for user in users_list:
