@@ -40,6 +40,7 @@ def auth(message):
         curs = conn.cursor()
         curs.execute('UPDATE target SET login= %s, password= %s WHERE tg_id= %s', (login, password, message.from_user.id))
         conn.commit()
+        conn.close()
         bot.send_message(message.chat.id, 'Введи имя таргет аккаунта, из которого будут перетекать подписчики')
         bot.register_next_step_handler(message, target_acc)
     else:
@@ -51,6 +52,7 @@ def start_message(message):
     curs = conn.cursor()
     curs.execute("INSERT INTO target(tg_id) VALUES (%s)" % message.from_user.id)
     conn.commit()
+    conn.close()
     bot.send_message(message.chat.id, 'Бот для привлечения на твой аккаунт целевой аудитории')
     bot.send_message(message.chat.id, 'Вы предоставляете боту данные своего аккаунта.\nОн под вашим аккаунтом лайкает активных подписчиков ваших конкурентов.\nПодписчики заходят на ваш аккаунт и видит интересную для себя информацию и подписывается на вас.')
     bot.send_message(message.chat.id, 'Мы не храним данные вашего аккаунта.\nКаждый раз, когда бот запускается, он запрашивает ваш логин и пароль и передает их в программу и удаляет.\nВаши данные передаются в зашифрованном виде.')
@@ -117,6 +119,7 @@ def main_func(message,trg):
         curs = conn.cursor()
         curs.execute('SELECT login, password FROM target WHERE tg_id = {}'.format(message.from_user.id))
         lp = curs.fetchall()
+        conn.close()
         login = lp[0][0]
         password = lp[0][1]
         api = InstagramAPI(login, password)
