@@ -10,10 +10,6 @@ from time import sleep
 import random
 import psycopg2
 
-conn = psycopg2.connect(dbname=DATABASE, user=USER, 
-                                    password=PASSWORD, 
-                                    host=HOST,
-                                    port=PORT)
 
 TOKEN = TOKEN
 bot = telebot.TeleBot(TOKEN)
@@ -37,6 +33,10 @@ def auth(message):
     if len(data) > 1:
         login = data[0].strip()
         password = data[1].strip()
+        conn = psycopg2.connect(dbname=DATABASE, user=USER, 
+                                    password=PASSWORD, 
+                                    host=HOST,
+                                    port=PORT)
         curs = conn.cursor()
         curs.execute('UPDATE target SET login= %s, password= %s WHERE tg_id= %s', (login, password, message.from_user.id))
         conn.commit()
@@ -49,6 +49,10 @@ def auth(message):
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
+    conn = psycopg2.connect(dbname=DATABASE, user=USER, 
+                                    password=PASSWORD, 
+                                    host=HOST,
+                                    port=PORT)
     curs = conn.cursor()
     curs.execute("INSERT INTO target(tg_id) VALUES (%s)" % message.from_user.id)
     conn.commit()
@@ -116,6 +120,10 @@ def like(message, users_list, api):
 
 def main_func(message,trg):
     try:
+        conn = psycopg2.connect(dbname=DATABASE, user=USER, 
+                                    password=PASSWORD, 
+                                    host=HOST,
+                                    port=PORT)
         curs = conn.cursor()
         curs.execute('SELECT login, password FROM target WHERE tg_id = {}'.format(message.from_user.id))
         lp = curs.fetchall()
