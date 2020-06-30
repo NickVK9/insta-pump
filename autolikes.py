@@ -102,7 +102,7 @@ def like(message, users_list, api):
         print('отоспался')
         print('проверяю на приват')
         print(user)
-        if user['is_private'] == False:
+        if user['is_privat'] == False:
             print('не приватный, беру айди')
             user_id = user['pk']
             print('беру публикации')
