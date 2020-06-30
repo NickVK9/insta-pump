@@ -114,6 +114,11 @@ def like(message, users_list, api):
 
 def main_func(message,trg):
     try:
+        curs = conn.cursor()
+        curs.execute('SELECT login, password FROM target WHERE tg_id = {}'.format(message.from_user.id))
+        lp = curs.fetchall()
+        login = lp[0][0]
+        password = lp[0][1]
         api = InstagramAPI(login, password)
         api.login()
         try:
